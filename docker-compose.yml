@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  mysql-satoaki:
+    image: mysql:8
+    ports:
+      - 3306:3306
+    volumes:
+      - ~/apps/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=satoaki
+      - MYSQL_PASSWORD=satoaki
+      - MYSQL_USER=satoaki
+      - MYSQL_DATABASE=sss

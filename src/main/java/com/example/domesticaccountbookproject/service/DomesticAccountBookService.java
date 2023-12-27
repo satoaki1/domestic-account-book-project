@@ -60,6 +60,28 @@ public class DomesticAccountBookService {
         }
     }
 
+    @Cacheable(value = "getSpentDetailsByUsage", key = "'/spentdetails' + #usageCategory")
+    public String getSpentDetailsByUsage(String usageCategory) {
+        Integer totalAmount = 0;
+        Boolean isCategoryExist = Boolean.FALSE;
+        for (int i = 0; i < getAllSpentDetails().size(); i++) {
+            if (getAllSpentDetails().get(i).getUsageCategory().equals(usageCategory)) {
+                isCategoryExist = Boolean.TRUE;
+                totalAmount += getAllSpentDetails().get(i).getSpentAmount();
+            }
+        }
+
+        if (isCategoryExist.equals(Boolean.FALSE)) {
+            return "The category does not exist. Try searching another categories included in the spent data.";
+        }
+
+        if (totalAmount > 0) {
+            return "The total spent amount for " + usageCategory + " is " + totalAmount + "円.";
+        } else {
+            return "The total spent amount for " + usageCategory + " is 0円. Currently, no expense on this usage.";
+        }
+    }
+
     @CacheEvict(value = "getAllSpentDetails", allEntries = true)
     public void addSpentDetail(SpentDetail spentDetail) {
         spentDetailRepository.save(spentDetail);
@@ -69,7 +91,8 @@ public class DomesticAccountBookService {
             @CacheEvict(value = "getTotalSpentAmount"),
             @CacheEvict(value = "getAllSpentDetails", allEntries = true),
             @CacheEvict(value = "getSpentDetail", key = "'/spentdetail' + #usageId"),
-            @CacheEvict(value = "getSpentDetailsByDate", key = "'/spentdetails' + #usedDate")
+            @CacheEvict(value = "getSpentDetailsByDate", key = "'/spentdetails' + #usedDate"),
+            @CacheEvict(value = "getSpentDetailsByUsage", key = "'/spentdetails' + #usageCategory")
     })
     public void updateSpentDetail(SpentDetail spentDetail, Long usageId) {
         spentDetailRepository.findById(usageId).ifPresent((updatedSpentDetail) -> {

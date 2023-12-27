@@ -39,6 +39,11 @@ public class DomesticAccountBookController {
         return domesticAccountBookService.getSpentDetailsByDate(year, month, date);
     }
 
+    @GetMapping("/spentdetails/usage/{usageCategory}")
+    public String getSpentDetailsByUsage(@PathVariable("usageCategory") String usageCategory) {
+        return domesticAccountBookService.getSpentDetailsByUsage(usageCategory);
+    }
+
     @PostMapping("/spentdetails")
     public void addSpentDetail(@RequestBody SpentDetail spentDetail) {
         domesticAccountBookService.addSpentDetail(spentDetail);
